@@ -25,22 +25,29 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    const services = client.db('smart-hr').collection("services");
-    const news = client.db("smart-hr").collection("news");
-    const testimonials = client.db('smart-hr').collection("testimonials");
+    const servicesCollection = client.db('smart-hr').collection("services");
+    const newsCollection = client.db("smart-hr").collection("news");
+    const testimonialsCollection = client.db('smart-hr').collection("testimonials");
+    const usersCollection = client.db('smart-hr').collection("users");
 
     app.get('/services', async(req, res) => {
-        const result = await services.find().toArray();
+        const result = await servicesCollection.find().toArray();
         res.send(result);
     })
 
     app.get('/news', async(req, res) => {
-        const result = await news.find().toArray();
+        const result = await newsCollection.find().toArray();
         res.send(result);
     })
 
     app.get('/testimonials', async(req, res) => {
-        const result = await testimonials.find().toArray();
+        const result = await testimonialsCollection.find().toArray();
+        res.send(result);
+    })
+
+    app.post('/users', async(req, res) => {
+        const user = req.body;
+        const result = await usersCollection.insertOne(user);
         res.send(result);
     })
 
