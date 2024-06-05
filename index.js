@@ -29,26 +29,33 @@ async function run() {
     const newsCollection = client.db("smart-hr").collection("news");
     const testimonialsCollection = client.db('smart-hr').collection("testimonials");
     const usersCollection = client.db('smart-hr').collection("users");
+    const worksheetCollection = client.db('smart-hr').collection("worksheet");
 
-    app.get('/services', async(req, res) => {
-        const result = await servicesCollection.find().toArray();
-        res.send(result);
+    app.get('/services', async (req, res) => {
+      const result = await servicesCollection.find().toArray();
+      res.send(result);
     })
 
-    app.get('/news', async(req, res) => {
-        const result = await newsCollection.find().toArray();
-        res.send(result);
+    app.get('/news', async (req, res) => {
+      const result = await newsCollection.find().toArray();
+      res.send(result);
     })
 
-    app.get('/testimonials', async(req, res) => {
-        const result = await testimonialsCollection.find().toArray();
-        res.send(result);
+    app.get('/testimonials', async (req, res) => {
+      const result = await testimonialsCollection.find().toArray();
+      res.send(result);
     })
 
-    app.post('/users', async(req, res) => {
-        const user = req.body;
-        const result = await usersCollection.insertOne(user);
-        res.send(result);
+    app.post('/users', async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+    })
+
+    app.post('/worksheet', async (req, res) => {
+      const worksheet = req.body;
+      const result = await worksheetCollection.insertOne(worksheet);
+      res.send(result);
     })
 
     // Connect the client to the server	(optional starting in v4.7)
