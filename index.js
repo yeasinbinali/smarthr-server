@@ -52,10 +52,28 @@ async function run() {
       res.send(result);
     })
 
-    app.post('/worksheet', async (req, res) => {
-      const worksheet = req.body;
-      const result = await worksheetCollection.insertOne(worksheet);
+    app.get('/worksheet', async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email }
+      const result = await worksheetCollection.find(query).toArray();
       res.send(result);
+    })
+
+    app.post('/worksheet', async (req, res) => {
+      const newWorksheet = req.body;
+      // Retrieve all existing worksheets
+      const existingWorksheets = await worksheetCollection.find().toArray();
+
+      // Add the new worksheet at the beginning
+      existingWorksheets.unshift(newWorksheet);
+
+      // Drop the existing collection
+      await worksheetCollection.drop();
+
+      // Reinsert all documents with the new worksheet at the beginning
+      await worksheetCollection.insertMany(existingWorksheets);
+
+      res.status(201).send({ newWorksheet });
     })
 
     // Connect the client to the server	(optional starting in v4.7)
