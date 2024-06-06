@@ -78,6 +78,11 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/worksheet', async(req, res) => {
+      const result = await worksheetCollection.find().toArray();
+      res.send(result);
+    })
+
     app.get('/worksheet', async (req, res) => {
       const email = req.query.email;
       const query = { email: email }
