@@ -30,6 +30,7 @@ async function run() {
     const testimonialsCollection = client.db('smart-hr').collection("testimonials");
     const usersCollection = client.db('smart-hr').collection("users");
     const worksheetCollection = client.db('smart-hr').collection("worksheet");
+    const messageCollection = client.db('smart-hr').collection("message")
 
     app.get('/services', async (req, res) => {
       const result = await servicesCollection.find().toArray();
@@ -65,6 +66,7 @@ async function run() {
       const options = { upsert: true };
       const updatedUser = {
         $set: {
+          role: user.role,
           status: user.status
         }
       }
@@ -93,6 +95,17 @@ async function run() {
     app.post('/worksheet', async (req, res) => {
       const newWorksheet = req.body;
       const result = await worksheetCollection.insertOne(newWorksheet);
+      res.send(result);
+    })
+
+    app.get('/message', async(req, res) => {
+      const result = await messageCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.post('/message', async(req, res) => {
+      const message = req.body;
+      const result = await messageCollection.insertOne(message);
       res.send(result);
     })
 
