@@ -59,18 +59,42 @@ async function run() {
       res.send(user);
     })
 
-    app.patch('/users/:id', async (req, res) => {
+    app.patch('/users/:id/status', async (req, res) => {
       const id = req.params.id;
       const user = req.body;
       const filter = { _id: new ObjectId(id) };
-      const options = { upsert: true };
       const updatedUser = {
         $set: {
-          role: user.role,
           status: user.status
         }
       }
-      const result = await usersCollection.updateOne(filter, updatedUser, options);
+      const result = await usersCollection.updateOne(filter, updatedUser);
+      res.send(result);
+    })
+
+    app.put('/users/:id/role', async (req, res) => {
+      const id = req.params.id;
+      const user = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updatedUser = {
+        $set: {
+          role: user.role
+        }
+      }
+      const result = await usersCollection.updateOne(filter, updatedUser);
+      res.send(result);
+    })
+
+    app.patch('/users/:id/fired', async (req, res) => {
+      const id = req.params.id;
+      const user = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updatedUser = {
+        $set: {
+          fired: user.fired
+        }
+      }
+      const result = await usersCollection.updateOne(filter, updatedUser);
       res.send(result);
     })
 
