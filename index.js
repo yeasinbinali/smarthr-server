@@ -98,6 +98,19 @@ async function run() {
       res.send(result);
     })
 
+    app.patch('/users/:id/salary', async (req, res) => {
+      const id = req.params.id;
+      const user = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updatedUser = {
+        $set: {
+          salary: user.salary
+        }
+      }
+      const result = await usersCollection.updateOne(filter, updatedUser);
+      res.send(result);
+    })
+
     app.post('/users', async (req, res) => {
       const user = req.body;
       const result = await usersCollection.insertOne(user);
@@ -122,12 +135,12 @@ async function run() {
       res.send(result);
     })
 
-    app.get('/message', async(req, res) => {
+    app.get('/message', async (req, res) => {
       const result = await messageCollection.find().toArray();
       res.send(result);
     })
 
-    app.post('/message', async(req, res) => {
+    app.post('/message', async (req, res) => {
       const message = req.body;
       const result = await messageCollection.insertOne(message);
       res.send(result);
