@@ -3,6 +3,7 @@ const cors = require('cors')
 const app = express()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const port = process.env.PORT || 5000;
 
 // smart-hr
@@ -30,7 +31,8 @@ async function run() {
     const testimonialsCollection = client.db('smart-hr').collection("testimonials");
     const usersCollection = client.db('smart-hr').collection("users");
     const worksheetCollection = client.db('smart-hr').collection("worksheet");
-    const messageCollection = client.db('smart-hr').collection("message")
+    const messageCollection = client.db('smart-hr').collection("message");
+    const paymentCollection = client.db('smart-hr').collection("payment");
 
     app.get('/services', async (req, res) => {
       const result = await servicesCollection.find().toArray();
@@ -144,6 +146,29 @@ async function run() {
       const message = req.body;
       const result = await messageCollection.insertOne(message);
       res.send(result);
+    })
+
+    // payment intent
+    app.post('/create-payment-intent', async (req, res) => {
+      const { price } = req.body;
+      const amount = parseInt(price * 100);
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: 'usd',
+        payment_method_types: ['card']
+      });
+
+      res.send({
+        clientSecret: paymentIntent.client_secret
+      })
+    })
+
+    app.post('/payment', async (req, res) => {
+      const payment = req.body;
+      const paymentResult = await paymentCollection.insertOne(payment);
+      console.log('payment info', payment);
+      res.send(paymentResult);
     })
 
     // Connect the client to the server	(optional starting in v4.7)
