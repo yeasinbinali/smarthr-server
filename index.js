@@ -10,7 +10,15 @@ const port = process.env.PORT || 5000;
 // l1ZKSwIqq9W0y8kd
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://smart-hr-site.web.app",
+      "https://smart-hr-site.firebaseapp.com",
+    ]
+  })
+);
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.d7bt1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -171,11 +179,22 @@ async function run() {
       res.send(paymentResult);
     })
 
+    app.get('/payment', async (req, res) => {
+      const result = await paymentCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.get('/payment/:email', async (req, res) => {
+      const query = { email: req.params.email }
+      const result = await paymentCollection.find(query).toArray();
+      res.send(result);
+    })
+
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    // await client.db("admin").command({ ping: 1 });
+    // console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
